@@ -44,6 +44,7 @@ def OnAttach(status):
 
 def OnMessageStatus(Message, Status):
     if Status == 'RECEIVED':
+        restart_counter += 1
         print(Message.FromHandle + ': ' + Message.Body)
         response = cb1.ask(Message.Body)
         print('sending to: ' + Message.FromHandle + ' message: ' + response)
