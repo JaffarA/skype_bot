@@ -10,6 +10,15 @@ import markovify
 with open ("padula.txt", "r") as myfile:
       padula_text=myfile.read().replace('\n', ' ')
 
+# Read text file, set to 0 (used to restart after X lines are written)
+# sets file count to 0, will restart when it becomes 1.
+restart = open("restart.txt", "w")
+restart.write("0")
+restart.close()
+
+# counts line until a restart is needed
+restart_counter = 0
+
 # Build the model.
 text_model = markovify.Text(padula_text)
 
@@ -40,8 +49,10 @@ def OnMessageStatus(Message, Status):
         print('sending to: ' + Message.FromHandle + ' message: ' + response)
         if response != "Developers, start your chat engines! Cleverscript.com." or "Create chatty bots for fun and games, or even for business - Cleverscript.com." or "*kicks you* Hey you! Chat to the free ANGRY DUDE iOS app!":
             skype.SendMessage(Message.FromHandle, response)
-        else:
+        elif response == "Clever you or Cleverme!? The app." or "I am Cleverbot." or "I am a very clever bot (hint hint)." or "Make yourself real with the Cleverme app!":
             skype.SendMessage(Message.FromHandle, "No Comment")
+        elif response == "":
+            skype.SendMessage(Message.FromHandle, "Please tell my owner i need to be restarted.")
 
     if Status == 'READ':
         print(Message.FromDisplayName + ': ' + Message.Body)
@@ -71,4 +82,10 @@ while not Cmd == 'exit' and not Cmd == 'quit':
        print('Type "markov" to generate sentences')
        print('Type "exit" to quit')
        print('Type "help" for help')
+       if restart_counter >= 30:
+           restart = open("restart.txt", "w")
+           restart.write("1")
+           restart.close()
+           print("Restarting")
+           Cmd = 'exit'
        next
