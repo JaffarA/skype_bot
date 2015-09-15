@@ -37,15 +37,21 @@ def OnAttach(status):
 def OnMessageStatus(Message, Status):
     if Status == 'RECEIVED':
         print(Message.FromHandle + ': ' + Message.Body)
-        response = chatbot.get_response(Message.Body)
-        print('sending to: ' + Message.FromHandle + ' message: ' + response)
-        skype.SendMessage(Message.FromHandle, response)
+        markov_orNot = random.randint(0, 11) # generates a number in the range of 0 and 11.
+        if markov_orNot == 5: # if the number is 5, print a markov sentence as a reply.
+            print("Markov! Choo-Choo!")
+            response = text_model.make_sentence()
+            skype.SendMessage(Message.FromHandle, response)
+        else:
+            print("Chatbot is thinking...")
+            response = chatbot.get_response(Message.Body)
+            skype.SendMessage(Message.FromHandle, response)
         
     if Status == 'READ':
         print(Message.FromDisplayName + ': ' + Message.Body)
 
     if Status == 'SENT':
-        print('Myself: ' + Message.Body)
+        print('Message Delivered.')
 
 # Creating instance of Skype object, assigning handler functions and attaching to Skype.
 skype = Skype4Py.Skype()
